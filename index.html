@@ -1,54 +1,27 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shop Quần Áo - POS</title>
+  <title>Sapo POS - Shop Quần Áo</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="container">
-    <!-- Menu dọc -->
-    <div class="sidebar">
-      <h2>Shop Quần Áo</h2>
-      <ul>
-        <li onclick="showSection('products')">Sản phẩm</li>
-        <li onclick="showSection('orders')">Đơn hàng</li>
-        <li onclick="showSection('reports')">Báo cáo</li>
-      </ul>
+    <!-- Danh sách sản phẩm -->
+    <div class="product-list">
+      <h2>Sản phẩm</h2>
+      <div id="products"></div>
     </div>
 
-    <!-- Nội dung chính -->
-    <div class="main-content">
-      <!-- Section Sản phẩm -->
-      <div id="products" class="section active">
-        <h1>Danh sách sản phẩm</h1>
-        <ul id="product-list"></ul>
-        <h2>Thêm sản phẩm</h2>
-        <form id="add-product-form">
-          <input type="text" id="product-name" placeholder="Tên sản phẩm" required>
-          <input type="number" id="product-price" placeholder="Giá (VND)" required>
-          <input type="number" id="product-quantity" placeholder="Số lượng" required>
-          <button type="submit">Thêm</button>
-        </form>
+    <!-- Giỏ hàng -->
+    <div class="cart">
+      <h2>Giỏ hàng</h2>
+      <ul id="cart-items"></ul>
+      <div class="total">
+        <strong>Tổng tiền:</strong> <span id="total-amount">0</span> VND
       </div>
-
-      <!-- Section Đơn hàng -->
-      <div id="orders" class="section">
-        <h1>Tạo đơn hàng</h1>
-        <select id="order-product"></select>
-        <input type="number" id="order-quantity" placeholder="Số lượng" min="1">
-        <button onclick="addToOrder()">Thêm vào đơn</button>
-        <ul id="order-list"></ul>
-        <button onclick="checkout()">Thanh toán</button>
-      </div>
-
-      <!-- Section Báo cáo -->
-      <div id="reports" class="section">
-        <h1>Báo cáo doanh thu</h1>
-        <p>Tổng doanh thu: <span id="total-revenue">0</span> VND</p>
-      </div>
+      <button class="checkout-btn" onclick="checkout()">Thanh toán</button>
     </div>
   </div>
 
