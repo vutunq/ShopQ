@@ -1,84 +1,73 @@
-// script.js
-let products = [];
-let orders = [];
-let totalRevenue = 0;
+// Danh sách sản phẩm mẫu (sẽ thay bằng dữ liệu từ Supabase sau)
+const products = [
+  { id: 1, name: "Áo thun trắng", price: 150000 },
+  { id: 2, name: "Quần jeans", price: 300000 },
+  { id: 3, name: "Áo sơ mi", price: 200000 }
+];
 
-document.getElementById('add-product-form').addEventListener('submit', function(event) {
-  event.preventDefault();
+let cart = [];
 
-  const name = document.getElementById('product-name').value;
-  const price = parseInt(document.getElementById('product-price').value);
-  const quantity = parseInt(document.getElementById('product-quantity').value);
-
-  const product = { name, price, quantity };
-  products.push(product);
-  updateProductList();
-  updateOrderProductDropdown();
-
-  this.reset();
-});
-
-function updateProductList() {
-  const list = document.getElementById('product-list');
-  list.innerHTML = '';
+function displayProducts() {
+  const productContainer = document.getElementById('products');
+  productContainer.innerHTML = '';
   products.forEach(product => {
-    const li = document.createElement('li');
-    li.textContent = `${product.name} - ${product.price} VND (Còn: ${product.quantity})`;
-    list.appendChild(li);
+    const div = document.createElement('div');
+    div.className = 'product-item';
+    div.innerHTML = `${product.name}<br>${product.price} VND`;
+    div.onclick = () => addToCart(product);
+    productContainer.appendChild(div);
   });
 }
 
-function updateOrderProductDropdown() {
-  const select = document.getElementById('order-product');
-  select.innerHTML = '';
-  products.forEach(product => {
-    const option = document.createElement('option');
-    option.value = product.name;
-    option.textContent = product.name;
-    select.appendChild(option);
-  });
-}
-
-function addToOrder() {
-  const productName = document.getElementById('order-product').value;
-  const quantity = parseInt(document.getElementById('order-quantity').value);
-  const product = products.find(p => p.name === productName);
-
-  if (product && product.quantity >= quantity) {
-    orders.push({ name: productName, price: product.price, quantity });
-    product.quantity -= quantity;
-    updateProductList();
-    updateOrderList();
+function addToCart(product) {
+  const existingItem = cart.find(item => item.id === product.id);
+  if (existingItem) {
+    existingItem.quantity += 1;
   } else {
-    alert('Số lượng không đủ!');
+    cart.push({ ...product, quantity: 1 });
+  }
+  updateCart();
+}
+
+function updateCart() {
+  const cartList = document.getElementById('cart-items');
+  cartList.innerHTML = '';
+  let total = 0;
+
+  cart.forEach(item => {
+    const li = document.createElement('li');
+    li.className = 'cart-item';
+    li.innerHTML = `
+      ${item.name} - ${item.quantity} x ${item.price} VND
+      <button onclick="removeFromCart(${item.id})">-</button>
+    `;
+    cartList.appendChild(li);
+    total += item.price * item.quantity;
+  });
+
+  document.getElementById('total-amount').textContent = total;
+}
+
+function removeFromCart(id) {
+  const itemIndex = cart.findIndex(item => item.id === id);
+  if (itemIndex !== -1) {
+    cart[itemIndex].quantity -= 1;
+    if (cart[itemIndex].quantity === 0) {
+      cart.splice(itemIndex, 1);
+    }
+    updateCart();
   }
 }
 
-function updateOrderList() {
-  const list = document.getElementById('order-list');
-  list.innerHTML = '';
-  orders.forEach(order => {
-    const li = document.createElement('li');
-    li.textContent = `${order.name} - ${order.quantity} x ${order.price} VND`;
-    list.appendChild(li);
-  });
-}
-
 function checkout() {
-  let total = 0;
-  orders.forEach(order => {
-    total += order.price * order.quantity;
-  });
-  totalRevenue += total;
-  document.getElementById('total-revenue').textContent = totalRevenue;
-  orders = [];
-  updateOrderList();
-  alert(`Thanh toán thành công! Tổng tiền: ${total} VND`);
+  if (cart.length === 0) {
+    alert('Giỏ hàng trống!');
+    return;
+  }
+  alert(`Thanh toán thành công! Tổng tiền: ${document.getElementById('total-amount').textContent} VND`);
+  cart = [];
+  updateCart();
 }
 
-function showSection(sectionId) {
-  document.querySelectorAll('.section').forEach(section => {
-    section.classList.remove('active');
-  });
-  document.getElementById(sectionId).classList.add('active');
-}
+// Hiển thị sản phẩm khi tải trang
+displayProducts();
